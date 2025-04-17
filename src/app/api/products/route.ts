@@ -54,7 +54,7 @@ export async function POST(req: Request) {
 export async function GET() {
   try {
     await connectDB();
-    const products = await Product.find({}).sort({ createdAt: -1 });
+    const products = await (Product.find as any)({}, {}, { sort: { createdAt: -1 } });
     
     return NextResponse.json(
       { 
@@ -89,7 +89,7 @@ export async function DELETE(req: Request) {
       );
     }
 
-    const deletedProduct = await Product.findByIdAndDelete(id);
+    const deletedProduct = await (Product.findByIdAndDelete as any)(id);
     
     if (!deletedProduct) {
       return NextResponse.json(

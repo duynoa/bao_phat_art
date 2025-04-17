@@ -3,14 +3,20 @@ import connectDB from "@/lib/db";
 import Project from "@/models/Project";
 import { uploadImage } from "@/lib/uploadImage";
 
+type Props = {
+  params: Promise<{
+    id: string;
+  }>;
+};
+
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  props: Props
 ) {
   try {
     await connectDB();
-    const { id } = params;
-    
+    const params = await props.params;
+
     const formData = await request.formData();
 
     const updateData: any = {
@@ -28,11 +34,9 @@ export async function PUT(
       updateData.mainImage = imagePath;
     }
 
-    const updatedProject = await Project.findByIdAndUpdate(
-      id,
-      updateData,
-      { new: true }
-    );
+    const updatedProject = await (Project.findByIdAndUpdate as any)(params.id, updateData, {
+      new: true,
+    });
 
     if (!updatedProject) {
       return NextResponse.json(
@@ -56,13 +60,13 @@ export async function PUT(
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  props: Props
 ) {
   try {
     await connectDB();
-    const { id } = params;
+    const params = await props.params;
 
-    const project = await Project.findById(id);
+    const project = await (Project.findById as any)(params.id);
 
     if (!project) {
       return NextResponse.json(
@@ -78,8 +82,11 @@ export async function GET(
   } catch (error: any) {
     console.error("Lỗi khi lấy thông tin dự án:", error);
     return NextResponse.json(
-      { message: "Có lỗi xảy ra khi lấy thông tin dự án", error: error.message },
+      {
+        message: "Có lỗi xảy ra khi lấy thông tin dự án",
+        error: error.message,
+      },
       { status: 500 }
     );
   }
-} 
+}

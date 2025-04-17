@@ -4,6 +4,7 @@ import EditButton from "@/components/buttons/EditButton";
 import { Add } from "@mui/icons-material";
 import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from "@mui/material";
 import axios from "axios";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
 import "suneditor/dist/css/suneditor.min.css";
@@ -14,7 +15,7 @@ interface Project {
   address: string;
   completionYear: number;
   type: string;
-  image: any;
+  mainImage: any;
   summary: string;
 }
 
@@ -37,6 +38,11 @@ const ProjectAdmin = () => {
   };
 
   const columns = [
+    {
+      id: 'image',
+      label: 'Hình ảnh',
+      minWidth: 170
+    },
     {
       id: 'name',
       label: 'Tên dự án',
@@ -156,6 +162,15 @@ const ProjectAdmin = () => {
               ) : (
                 projects.map((project) => (
                   <TableRow key={project._id}>
+                    <TableCell>
+                      <Image
+                        width={200}
+                        height={100}
+                        src={project.mainImage} 
+                        alt={project.name}
+                        className="w-36 aspect-[3/2] object-cover rounded"
+                      />
+                    </TableCell>
                     <TableCell>{project.name}</TableCell>
                     <TableCell>{project.address}</TableCell>
                     <TableCell align="center">{project.completionYear}</TableCell>

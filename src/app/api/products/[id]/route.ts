@@ -1,30 +1,33 @@
-import { NextResponse } from 'next/server';
-import Product from '@/models/Product';
-import connectDB from '@/lib/db';
-import { uploadImage } from '@/lib/uploadImage';
+import connectDB from "@/lib/db";
+import { uploadImage } from "@/lib/uploadImage";
+import Product from "@/models/Product";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function PUT(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+type Props = {
+  params: Promise<{
+    id: string;
+  }>;
+};
+
+export async function PUT(req: NextRequest, props: Props) {
   try {
     await connectDB();
-    const { id } = params;
-    
+    const params = await props.params;
+
     const formData = await req.formData();
-    const files = formData.getAll('images') as File[];
-    const name = formData.get('name') as string;
-    const shortDesc = formData.get('shortDesc') as string;
-    const originalPrice = Number(formData.get('originalPrice'));
-    const salePrice = Number(formData.get('salePrice'));
-    const discountPercent = Number(formData.get('discountPercent'));
-    const specifications = formData.get('specifications') as string;
-    
+    const files = formData.getAll("images") as File[];
+    const name = formData.get("name") as string;
+    const shortDesc = formData.get("shortDesc") as string;
+    const originalPrice = Number(formData.get("originalPrice"));
+    const salePrice = Number(formData.get("salePrice"));
+    const discountPercent = Number(formData.get("discountPercent"));
+    const specifications = formData.get("specifications") as string;
+
     // Kiểm tra sản phẩm tồn tại
-    const existingProduct = await Product.findById(id);
+    const existingProduct = await (Product.findOne as any)({ _id: params.id });
     if (!existingProduct) {
       return NextResponse.json(
-        { message: 'Không tìm thấy sản phẩm' },
+        { message: "Không tìm thấy sản phẩm" },
         { status: 404 }
       );
     }
@@ -34,17 +37,17 @@ export async function PUT(
     if (files.length > 0) {
       for (const file of files) {
         try {
-          const uploadedUrl = await uploadImage(file, 'products');
+          const uploadedUrl = await uploadImage(file, "products");
           uploadedImages.push(uploadedUrl);
         } catch (error) {
-          console.error('Lỗi khi upload ảnh:', error);
+          console.error("Lỗi khi upload ảnh:", error);
         }
       }
     }
 
     // Cập nhật thông tin sản phẩm
-    const updatedProduct = await Product.findByIdAndUpdate(
-      id,
+    const updatedProduct = await (Product.findOneAndUpdate as any)(
+      { _id: params.id },
       {
         name,
         shortDesc,
@@ -52,49 +55,46 @@ export async function PUT(
         salePrice,
         discountPercent,
         specifications,
-        ...(uploadedImages.length > 0 && { images: uploadedImages })
+        ...(uploadedImages.length > 0 && { images: uploadedImages }),
       },
       { new: true }
     );
-    
+
     return NextResponse.json(
-      { message: 'Cập nhật sản phẩm thành công', product: updatedProduct },
+      { message: "Cập nhật sản phẩm thành công", product: updatedProduct },
       { status: 200 }
     );
   } catch (error: any) {
-    console.error('Lỗi server:', error);
+    console.error("Lỗi server:", error);
     return NextResponse.json(
-      { message: 'Lỗi khi cập nhật sản phẩm', error: error.message },
+      { message: "Lỗi khi cập nhật sản phẩm", error: error.message },
       { status: 500 }
     );
   }
 }
 
-export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function GET(req: NextRequest, props: Props) {
   try {
     await connectDB();
-    const { id } = params;
-    
-    const product = await Product.findById(id);
+    const params = await props.params;
+
+    const product = await (Product.findById as any)(params.id);
     if (!product) {
       return NextResponse.json(
-        { message: 'Không tìm thấy sản phẩm' },
+        { message: "Không tìm thấy sản phẩm" },
         { status: 404 }
       );
     }
-    
+
     return NextResponse.json(
-      { message: 'Lấy thông tin sản phẩm thành công', product },
+      { message: "Lấy thông tin sản phẩm thành công", product },
       { status: 200 }
     );
   } catch (error: any) {
-    console.error('Lỗi server:', error);
+    console.error("Lỗi server:", error);
     return NextResponse.json(
-      { message: 'Lỗi khi lấy thông tin sản phẩm', error: error.message },
+      { message: "Lỗi khi lấy thông tin sản phẩm", error: error.message },
       { status: 500 }
     );
   }
-} 
+}

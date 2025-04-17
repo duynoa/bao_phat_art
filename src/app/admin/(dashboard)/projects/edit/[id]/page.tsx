@@ -13,7 +13,7 @@ const EditProjectPage = () => {
     const fetchProject = async () => {
       try {
         const response = await axios.get(`/api/projects/${id}`);
-        setProject(response.data);
+        setProject(response.data.project);
       } catch (error) {
         console.error('Lỗi khi lấy thông tin dự án:', error);
       } finally {

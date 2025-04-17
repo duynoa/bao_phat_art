@@ -34,7 +34,7 @@ export async function middleware(request: NextRequest) {
       // Cho phép truy cập
       return NextResponse.next();
     } catch (error: any) {
-      // Token không hợp lệ, chuyển hướng đến trang đăng nhập
+      console.log(error);
       return NextResponse.redirect(loginUrl);
     }
   }

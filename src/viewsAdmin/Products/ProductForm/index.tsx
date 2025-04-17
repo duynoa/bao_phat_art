@@ -8,19 +8,19 @@ import React, { useEffect, useState } from "react";
 
 interface FormData {
   name: string;
-  price: number;
+  salePrice: number;
   originalPrice: number;
   images: string[];
-  description: string;
+  shortDesc: string;
   specifications: string;
 }
 
 interface FormErrors {
   name?: string;
-  price?: string;
+  salePrice?: string;
   originalPrice?: string;
   images?: string;
-  description?: string;
+  shortDesc?: string;
   specifications?: string;
 }
 
@@ -36,10 +36,10 @@ const ProductForm: React.FC<ProductFormProps> = ({
   const router = useRouter();
   const [formData, setFormData] = useState<FormData>({
     name: "",
-    price: 0,
+    salePrice: 0,
     originalPrice: 0,
     images: [],
-    description: "",
+    shortDesc: "",
     specifications: "",
   });
   const [errors, setErrors] = useState<FormErrors>({});
@@ -73,8 +73,8 @@ const ProductForm: React.FC<ProductFormProps> = ({
     //   newErrors.originalPrice = "Vui lòng nhập giá gốc";
     // if (!formData.images.length)
     //   newErrors.images = "Vui lòng tải lên ít nhất 1 hình ảnh";
-    if (!formData.description)
-      newErrors.description = "Vui lòng nhập mô tả sản phẩm";
+    if (!formData.shortDesc)
+      newErrors.shortDesc = "Vui lòng nhập mô tả sản phẩm";
     if (!formData.specifications)
       newErrors.specifications = "Vui lòng nhập thông số kỹ thuật";
 
@@ -87,11 +87,11 @@ const ProductForm: React.FC<ProductFormProps> = ({
       try {
         const formDataToSend = new FormData();
         formDataToSend.append("name", formData.name);
-        formDataToSend.append("shortDesc", formData.description);
+        formDataToSend.append("shortDesc", formData.shortDesc);
         formDataToSend.append("originalPrice", formData.originalPrice.toString());
-        formDataToSend.append("salePrice", formData.price.toString());
+        formDataToSend.append("salePrice", formData.salePrice.toString());
 
-        const discountPercent = ((formData.originalPrice - formData.price) / formData.originalPrice) * 100;
+        const discountPercent = ((formData.originalPrice - formData.salePrice) / formData.originalPrice) * 100;
         formDataToSend.append("discountPercent", discountPercent.toString());
         formDataToSend.append("specifications", formData.specifications);
 
@@ -241,28 +241,34 @@ const ProductForm: React.FC<ProductFormProps> = ({
                   <TextField
                     label="Giá bán (VNĐ)"
                     fullWidth
-                    type="number"
-                    value={formData.price}
-                    onChange={handleChange("price")}
-                    error={!!errors.price}
-                    helperText={errors.price}
-                    placeholder="Nhập giá bán..."
-                    InputProps={{
-                      inputProps: { min: 0 },
+                    type="text"
+                    value={formData.salePrice.toLocaleString('vi-VN')}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/[^\d]/g, '');
+                      setFormData(prev => ({
+                        ...prev,
+                        salePrice: parseInt(value) || 0
+                      }));
                     }}
+                    error={!!errors.salePrice}
+                    helperText={errors.salePrice}
+                    placeholder="Nhập giá bán..."
                   />
                   <TextField
-                    label="Giá gốc (VNĐ)"
+                    label="Giá gốc (VNĐ)" 
                     fullWidth
-                    type="number"
-                    value={formData.originalPrice}
-                    onChange={handleChange("originalPrice")}
+                    type="text"
+                    value={formData.originalPrice.toLocaleString('vi-VN')}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/[^\d]/g, '');
+                      setFormData(prev => ({
+                        ...prev,
+                        originalPrice: parseInt(value) || 0
+                      }));
+                    }}
                     error={!!errors.originalPrice}
                     helperText={errors.originalPrice}
                     placeholder="Nhập giá gốc..."
-                    InputProps={{
-                      inputProps: { min: 0 },
-                    }}
                   />
                 </div>
               </div>
@@ -272,10 +278,10 @@ const ProductForm: React.FC<ProductFormProps> = ({
           <TextField
             label="Mô tả sản phẩm"
             fullWidth
-            value={formData.description}
-            onChange={handleChange("description")}
-            error={!!errors.description}
-            helperText={errors.description}
+            value={formData.shortDesc}
+            onChange={handleChange("shortDesc")}
+            error={!!errors.shortDesc}
+            helperText={errors.shortDesc}
             multiline
             rows={4}
           />

@@ -1,4 +1,16 @@
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
+
+interface Product extends Document {
+  name: string;
+  shortDesc?: string;
+  originalPrice: number;
+  salePrice?: number;
+  discountPercent?: number;
+  specifications?: string;
+  images: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 const productSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -12,4 +24,5 @@ const productSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now }
 });
 
-export default mongoose.models.Product || mongoose.model('Product', productSchema); 
+const Product = mongoose.models.Product || mongoose.model<Product>('Product', productSchema);
+export default Product; 

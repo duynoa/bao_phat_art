@@ -6,12 +6,12 @@ import { uploadImage } from "@/lib/uploadImage";
 export async function POST(request: Request) {
   try {
     await connectDB();
-    
+
     const formData = await request.formData();
-    
+
     const mainImage = formData.get("mainImage") as File;
     const imagePath = await uploadImage(mainImage, "projects");
-    
+
     // Tạo và lưu dự án vào database
     const project = new Project({
       name: formData.get("name"),
@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     });
 
     await project.save();
-    
+
     return NextResponse.json(
       { message: "Dự án đã được tạo thành công", project },
       { status: 201 }
@@ -41,17 +41,18 @@ export async function POST(request: Request) {
 export async function GET(request: Request) {
   try {
     await connectDB();
-    
+
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '0');
-    const limit = parseInt(searchParams.get('limit') || '10');
+    const page = parseInt(searchParams.get("page") || "0");
+    const limit = parseInt(searchParams.get("limit") || "10");
     const skip = page * limit;
 
-    const projects = await Project.find({})
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
-      
+    const projects = await (Project.find as any)(
+      {},
+      {},
+      { sort: { createdAt: -1 }, skip, limit }
+    );
+
     const total = await Project.countDocuments();
 
     return NextResponse.json({
@@ -59,13 +60,16 @@ export async function GET(request: Request) {
       data: projects,
       total,
       page,
-      limit
+      limit,
     });
   } catch (error: any) {
     console.error("Lỗi khi lấy danh sách dự án:", error);
     return NextResponse.json(
-      { message: "Có lỗi xảy ra khi lấy danh sách dự án", error: error.message },
+      {
+        message: "Có lỗi xảy ra khi lấy danh sách dự án",
+        error: error.message,
+      },
       { status: 500 }
     );
   }
-} 
+}

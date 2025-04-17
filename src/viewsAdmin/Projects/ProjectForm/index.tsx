@@ -5,6 +5,7 @@ import React from "react";
 import SunEditor from "suneditor-react";
 import "suneditor/dist/css/suneditor.min.css";
 import axios from 'axios';
+import Image from "next/image";
 
 interface ProjectFormProps {
   initialValues?: any;
@@ -16,12 +17,19 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   isEditing = false,
 }) => {
   const [formData, setFormData] = React.useState(initialValues || {});
+  const [imagePreview, setImagePreview] = React.useState<string | null>(null);
   const router = useRouter();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
     if (initialValues) {
       setFormData(initialValues);
+    }
+  }, [initialValues]);
+
+  React.useEffect(() => {
+    if (initialValues?.mainImage) {
+      setImagePreview(initialValues.mainImage);
     }
   }, [initialValues]);
 
@@ -85,6 +93,10 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
         ...prev,
         image: file
       }));
+      
+      // Tạo URL xem trước cho hình ảnh
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview(previewUrl);
     }
   };
 
@@ -96,8 +108,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
         </h1>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-8 bg-white p-6 rounded-lg shadow">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-6">
             <div>
               <TextField
@@ -161,14 +173,31 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             </label>
             <div
               onClick={handleImageClick}
-              className="upload-area flex flex-col items-center justify-center p-6 rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 hover:border-blue-400 hover:bg-blue-50 transition-all duration-300 cursor-pointer"
+              className="upload-area flex flex-col items-center justify-center p-3 rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 hover:border-blue-400 hover:bg-blue-50 transition-all duration-300 cursor-pointer"
             >
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3">
-                <span className="text-2xl text-blue-500">+</span>
-              </div>
-              <div className="text-gray-700 font-medium">Tải lên hình ảnh dự án</div>
-              <div className="text-gray-500 text-sm mt-1">Kéo thả hoặc click để chọn</div>
-              <div className="text-gray-400 text-xs mt-1">Định dạng: PNG, JPG (Tối đa: 5MB)</div>
+              {imagePreview ? (
+                <div className="w-full relative">
+                  <Image
+                    width={1000}
+                    height={1000}
+                    src={imagePreview} 
+                    alt="Preview" 
+                    className="w-full h-48 object-cover rounded-lg"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity rounded-lg">
+                    <span className="text-white">Thay đổi hình ảnh</span>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3">
+                    <span className="text-2xl text-blue-500">+</span>
+                  </div>
+                  <div className="text-gray-700 font-medium">Tải lên hình ảnh dự án</div>
+                  <div className="text-gray-500 text-sm mt-1">Kéo thả hoặc click để chọn</div>
+                  <div className="text-gray-400 text-xs mt-1">Định dạng: PNG, JPG (Tối đa: 5MB)</div>
+                </>
+              )}
               <input
                 type="file"
                 ref={fileInputRef}
