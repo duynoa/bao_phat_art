@@ -31,12 +31,12 @@ const Header = () => {
             </Link>
           ))}
           <Link 
-            href="tel:0909090909" 
+            href="tel: 0789 490 590" 
             className='py-2 px-4 rounded-full bg-gray-400 hover:bg-gray-500 text-gray-800 hover:text-white font-bold transition-all duration-300 hover:shadow-lg hover:scale-105'
           >
             <div className="flex items-center gap-2">
               <Phone fontSize="small" className="animate-bounce" />
-              <p>0909090909</p>
+              <p> 0789 490 590</p>
             </div>
           </Link>
         </div>
@@ -71,14 +71,14 @@ const Header = () => {
                   </Link>
                 ))}
                 <Link 
-                  href="tel:0909090909" 
+                  href="tel: 0789 490 590" 
                   className='flex items-center gap-2 py-3 px-4 rounded-lg
                             bg-gray-800 text-white font-bold transition-all duration-300
                             hover:bg-gray-700 active:bg-gray-900'
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <Phone fontSize="small" className="animate-bounce" />
-                  <p>0909090909</p>
+                  <p> 0789 490 590</p>
                 </Link>
               </div>
             </div>

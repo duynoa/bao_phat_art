@@ -10,8 +10,9 @@ const quickLinks = [
 ];
 
 const contactLinks = [
-  { text: "Hotline: 0909090909", href: "/" },
-  { text: "Email: info@gmail.com", href: "/" },
+  { text: "Hotline1:  0789 490 590", href: "tel:0789490590" },
+  { text: "Hotline2:  0373 464 789", href: "tel:0373464789" },
+  { text: "Email: info@gmail.com", href: "mailto:info@gmail.com" },
 ];
 
 const Footer = () => {
