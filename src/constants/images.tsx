@@ -1,4 +1,6 @@
 export const IMAGES = {
+  logo: "/images/logo.png",
+  logo2: "/images/logo2.png",
   carousel1: "/images/carousel1.jpg",
   gray: "/images/gray.png",
   aoPhao1: "/images/aophao1.webp",

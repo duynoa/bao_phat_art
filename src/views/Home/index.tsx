@@ -8,7 +8,7 @@ import Products from './Products'
 
 const HomePage = () => {
   return (
-    <div className='h-full w-full py-10 flex flex-col gap-20 bg-white'>
+    <div className='h-full w-full py-3 xl:py-10 flex flex-col gap-6 xl:gap-20 bg-white'>
       <Carousel />
       <Aboutus />
       <Service />
