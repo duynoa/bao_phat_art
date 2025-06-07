@@ -56,7 +56,7 @@ const ProductAdmin = () => {
   const handleDelete = async (id: string) => {
     if (window.confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?')) {
       try {
-        await axios.delete(`/api/products/${id}`);
+        await axios.delete(`/api/products?id=${id}`);
         fetchProducts();
       } catch (error) {
         console.error('Lỗi khi xóa sản phẩm:', error);

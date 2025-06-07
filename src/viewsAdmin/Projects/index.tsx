@@ -29,7 +29,7 @@ const ProjectAdmin = () => {
   const handleDelete = async (id: string) => {
     if (window.confirm('Bạn có chắc chắn muốn xóa dự án này?')) {
       try {
-        await axios.delete(`/api/projects/${id}`);
+        await axios.delete(`/api/projects?id=${id}`);
         fetchProjects();
       } catch (error) {
         console.error("Lỗi khi xóa dự án:", error);

@@ -11,13 +11,13 @@ const Header = () => {
     { href: "/", label: "Trang chủ" },
     { href: "/gioi-thieu", label: "Giới thiệu" },
     { href: "/dich-vu", label: "Dịch vụ" },
-    { href: "/san-pham", label: "Sản phẩm" },
-    { href: "/du-an", label: "Dự án" },
+    // { href: "/san-pham", label: "Sản phẩm" },
+    // { href: "/du-an", label: "Dự án" },
     { href: "/lien-he", label: "Liên hệ" },
   ];
 
   return (
-    <div className="sticky top-0 z-50 border-b border-gray-800 backdrop-blur-md">
+    <div className="sticky top-0 bg-white z-50 border-b border-gray-200 backdrop-blur-md">
       <div className="flex items-center justify-between py-2 container mx-auto max-w-screen-xl px-4">
         <Link href="/" className="size-12 xl:size-16">
           <Image src={IMAGES.logo} alt="logo" width={500} height={500} />
@@ -36,7 +36,7 @@ const Header = () => {
           ))}
           <Link
             href="tel: 0789 490 590"
-            className="py-2 px-4 rounded-full bg-gray-400 hover:bg-gray-500 text-gray-800 hover:text-white font-bold transition-all duration-300 hover:shadow-lg hover:scale-105"
+            className="py-2 px-4 rounded-full bg-primary hover:bg-primary/80 text-gray-800 hover:text-white font-bold transition-all duration-300 hover:shadow-lg hover:scale-105"
           >
             <div className="flex items-center gap-2">
               <Phone fontSize="small" className="animate-bounce" />
@@ -77,7 +77,7 @@ const Header = () => {
                 <Link
                   href="tel: 0789 490 590"
                   className="flex items-center gap-2 py-3 px-4 rounded-lg
-                            bg-gray-800 text-white font-bold transition-all duration-300
+                            bg-primary text-white font-bold transition-all duration-300
                             hover:bg-gray-700 active:bg-gray-900"
                   onClick={() => setIsMenuOpen(false)}
                 >

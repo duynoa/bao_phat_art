@@ -19,8 +19,9 @@ export default {
 
         // primary: "#3d9e7b",
         // second: "#7DC9AF",
-        primary: "#77dada",
-        secondary: "#0e4f4f",
+        primary: "#3EC6C0",
+        secondary: "#E3D9C6",
+        cta: "#7BAF9E",
         "footer-color": "#F6F5F1",
         
       },

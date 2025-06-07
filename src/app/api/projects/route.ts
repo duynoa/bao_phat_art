@@ -73,3 +73,42 @@ export async function GET(request: Request) {
     );
   }
 }
+
+export async function DELETE(request: Request) {
+  try {
+    await connectDB();
+
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json(
+        { message: "Thiếu ID dự án" },
+        { status: 400 }
+      );
+    }
+
+    const deletedProject = await (Project.findByIdAndDelete as any)(id);
+
+    if (!deletedProject) {
+      return NextResponse.json(
+        { message: "Không tìm thấy dự án" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      message: "Xóa dự án thành công",
+      data: deletedProject,
+    });
+  } catch (error: any) {
+    console.error("Lỗi khi xóa dự án:", error);
+    return NextResponse.json(
+      {
+        message: "Có lỗi xảy ra khi xóa dự án",
+        error: error.message,
+      },
+      { status: 500 }
+    );
+  }
+}
