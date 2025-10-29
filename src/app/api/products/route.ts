@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import Product from '@/models/Product';
 import connectDB from '@/lib/db';
 import { uploadImage } from '@/lib/uploadImage';
+import { toSlug } from '@/utils/slug';
 
 export async function POST(req: Request) {
   try {
@@ -27,8 +28,20 @@ export async function POST(req: Request) {
       }
     }
     
+    // Tạo slug từ name và đảm bảo không trùng
+    const baseSlug = toSlug(name);
+    let uniqueSlug = baseSlug;
+    let attempt = 0;
+    while (await (Product.findOne as any)({ slug: uniqueSlug })) {
+      attempt += 1;
+      const suffix = Date.now().toString(36).slice(-4);
+      uniqueSlug = `${baseSlug}-${suffix}`;
+      if (attempt > 3) break; // tránh vòng lặp vô hạn
+    }
+
     const product = new Product({
       name,
+      slug: uniqueSlug,
       shortDesc,
       originalPrice,
       salePrice,
@@ -51,25 +64,35 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
     await connectDB();
+    const { searchParams } = new URL(req.url);
+    const slug = searchParams.get('slug');
+
+    if (slug) {
+      const product = await (Product.findOne as any)({ slug });
+      if (!product) {
+        return NextResponse.json(
+          { message: 'Không tìm thấy sản phẩm' },
+          { status: 404 }
+        );
+      }
+      return NextResponse.json(
+        { message: 'Lấy sản phẩm thành công', product },
+        { status: 200 }
+      );
+    }
+
     const products = await (Product.find as any)({}, {}, { sort: { createdAt: -1 } });
-    
     return NextResponse.json(
-      { 
-        message: 'Lấy danh sách sản phẩm thành công',
-        products 
-      },
+      { message: 'Lấy danh sách sản phẩm thành công', products },
       { status: 200 }
     );
   } catch (error: any) {
     console.error('Lỗi server:', error);
     return NextResponse.json(
-      { 
-        message: 'Lỗi khi lấy danh sách sản phẩm', 
-        error: error.message 
-      },
+      { message: 'Lỗi khi lấy danh sách sản phẩm', error: error.message },
       { status: 500 }
     );
   }

@@ -70,7 +70,7 @@ const Products = () => {
                   title={product.name}
                   description={product.shortDesc}
                   image={product.images[0]}
-                  href={`/san-pham/${product._id}`}
+                  href={`/san-pham/${product.slug}`}
                 />
               ))
             ) : (

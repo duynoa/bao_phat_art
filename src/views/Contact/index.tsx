@@ -1,5 +1,6 @@
 import React from 'react'
 import { TextField, Button } from '@mui/material';
+import Link from 'next/link';
 
 const Contact = () => {
   return (
@@ -32,7 +33,7 @@ const Contact = () => {
               </div>
               <div>
                 <h3 className="font-semibold text-gray-900">Số điện thoại:</h3>
-                <p className='text-gray-600'>0123 456 789</p>
+                <Link href="tel:0789490590" className='text-gray-600 hover:text-blue-600'>0789 490 590</Link>
               </div>
             </div>
             <div className="flex items-start gap-4">

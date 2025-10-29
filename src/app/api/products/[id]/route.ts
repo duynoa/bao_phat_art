@@ -2,6 +2,7 @@ import connectDB from "@/lib/db";
 import { uploadImage } from "@/lib/uploadImage";
 import Product from "@/models/Product";
 import { NextRequest, NextResponse } from "next/server";
+import { toSlug } from "@/utils/slug";
 
 type Props = {
   params: Promise<{
@@ -45,11 +46,27 @@ export async function PUT(req: NextRequest, props: Props) {
       }
     }
 
+    // Tạo slug nếu có cập nhật name
+    const slugUpdate: { slug?: string } = {};
+    if (typeof name === 'string' && name.trim()) {
+      const baseSlug = toSlug(name);
+      let uniqueSlug = baseSlug;
+      let attempt = 0;
+      while (await (Product.findOne as any)({ slug: uniqueSlug, _id: { $ne: params.id } })) {
+        attempt += 1;
+        const suffix = Date.now().toString(36).slice(-4);
+        uniqueSlug = `${baseSlug}-${suffix}`;
+        if (attempt > 3) break;
+      }
+      slugUpdate.slug = uniqueSlug;
+    }
+
     // Cập nhật thông tin sản phẩm
     const updatedProduct = await (Product.findOneAndUpdate as any)(
       { _id: params.id },
       {
         name,
+        ...slugUpdate,
         shortDesc,
         originalPrice,
         salePrice,

@@ -29,7 +29,10 @@ export async function uploadImage(file: File, folder: string = 'news'): Promise<
       })
       .toFile(filepath);
     
-    return `/uploads/${folder}/${filename}`;
+    const relativePath = `/uploads/${folder}/${filename}`;
+    const configuredBase = process.env.NEXT_PUBLIC_HOST || '';
+    const base = configuredBase.replace(/\/$/, '');
+    return base ? `${base}${relativePath}` : relativePath;
     
   } catch (error) {
     console.error('Lỗi khi upload ảnh:', error);

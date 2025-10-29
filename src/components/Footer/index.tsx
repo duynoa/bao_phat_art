@@ -23,7 +23,7 @@ const Footer = () => {
       <div className="container mx-auto max-w-screen-xl py-16 px-4">
         <div className="flex flex-col md:flex-row justify-between gap-10 md:gap-20">
           <div className="flex flex-col gap-8 text-gray-300">
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col gap-4">
               <Image
                 className="w-20 rounded-lg"
                 src={IMAGES.logo2}
@@ -31,14 +31,13 @@ const Footer = () => {
                 height={500}
                 alt="logo"
               />
-              <h2 className="text-white font-bold">Công ty TNHH Đầu tư xây dựng và cảnh quan Thiên Mộc</h2>
+              <h2 className="text-white font-bold">CTY MTV KIẾN TRÚC XÂY DỰNG BẢO PHÁT</h2>
             </div>
             <label className="font-medium flex flex-col gap-4">
               <h2>Quảng Ngãi, Việt Nam</h2>
               <h2>Mã số doanh nghiệp: ...</h2>
               <h2 className="text-sm">
-                Copyright © 2010 Công ty TNHH Đầu tư xây dựng và cảnh quan Thiên
-                Mộc
+                Copyright © 2010 CTY MTV kiến trúc xây dựng Bảo Phát
               </h2>
             </label>
           </div>

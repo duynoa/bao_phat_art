@@ -2,6 +2,7 @@ import mongoose, { Document } from 'mongoose';
 
 interface Product extends Document {
   name: string;
+  slug: string;
   shortDesc?: string;
   originalPrice: number;
   salePrice?: number;
@@ -14,6 +15,7 @@ interface Product extends Document {
 
 const productSchema = new mongoose.Schema({
   name: { type: String, required: true },
+  slug: { type: String, required: true, unique: true, index: true },
   shortDesc: { type: String },
   originalPrice: { type: Number, required: true },
   salePrice: { type: Number },
