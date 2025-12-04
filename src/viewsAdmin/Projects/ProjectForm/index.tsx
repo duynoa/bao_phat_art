@@ -215,6 +215,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
           </label>
           <SunEditor
             setOptions={{
+              height: "auto",
+              minHeight: "150px",
               buttonList: [
                 ["undo", "redo"],
                 ["font", "fontSize", "formatBlock"],
@@ -225,8 +227,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
                 ["fullScreen", "showBlocks", "codeView"],
               ],
               defaultStyle: "font-family: 'Inter', sans-serif; font-size: 15px;",
+              imageUploadUrl: "/api/upload-image",
+              imageAccept: "image/*",
             }}
-            height="400px"
             setDefaultStyle="font-family: 'Inter', sans-serif; font-size: 15px;"
             setContents={formData.summary || ''}
             onChange={(content) => setFormData(prev => ({ ...prev, summary: content }))}

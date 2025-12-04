@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import Project from "@/models/Project";
 import { uploadImage } from "@/lib/uploadImage";
+import fs from "fs";
+import path from "path";
 
 type Props = {
   params: Promise<{
@@ -16,6 +18,9 @@ export async function PUT(
   try {
     await connectDB();
     const params = await props.params;
+
+    // Lấy project hiện tại để biết ảnh cũ
+    const existingProject = await (Project.findById as any)(params.id);
 
     const formData = await request.formData();
 
@@ -32,6 +37,25 @@ export async function PUT(
     if (mainImage && mainImage.size > 0) {
       const imagePath = await uploadImage(mainImage, "projects");
       updateData.mainImage = imagePath;
+
+      // Xóa ảnh cũ nếu tồn tại
+      try {
+        const oldMainImage: string | undefined = existingProject?.mainImage;
+        if (oldMainImage) {
+          const imagePathname = oldMainImage.startsWith("http")
+            ? new URL(oldMainImage).pathname
+            : oldMainImage;
+
+          const relative = imagePathname.replace(/^\/+/, "");
+          const filePath = path.join(process.cwd(), "public", relative);
+
+          if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+          }
+        }
+      } catch (err) {
+        console.error("Lỗi khi xóa file ảnh mainImage cũ:", err);
+      }
     }
 
     const updatedProject = await (Project.findByIdAndUpdate as any)(params.id, updateData, {

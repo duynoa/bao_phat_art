@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import Project from "@/models/Project";
 import { uploadImage } from "@/lib/uploadImage";
+import fs from "fs";
+import path from "path";
 
 export async function POST(request: Request) {
   try {
@@ -95,6 +97,59 @@ export async function DELETE(request: Request) {
         { message: "Không tìm thấy dự án" },
         { status: 404 }
       );
+    }
+
+    // Xóa file ảnh chính nếu tồn tại
+    try {
+      const mainImage: string | undefined = (deletedProject as any).mainImage;
+      if (mainImage) {
+        // Nếu là URL tuyệt đối thì lấy phần pathname, nếu không thì dùng trực tiếp
+        const imagePathname = mainImage.startsWith("http")
+          ? new URL(mainImage).pathname
+          : mainImage;
+
+        // Đảm bảo chỉ xóa trong thư mục public/uploads
+        const relative = imagePathname.replace(/^\/+/, ""); // bỏ dấu /
+        const filePath = path.join(process.cwd(), "public", relative);
+
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+        }
+      }
+    } catch (err) {
+      console.error("Lỗi khi xóa file ảnh dự án:", err);
+      // Không throw để tránh làm fail luôn API xóa dự án
+    }
+
+    // Xóa các ảnh được chèn trong summary (SunEditor)
+    try {
+      const summary: string | undefined = (deletedProject as any).summary;
+      if (summary) {
+        const imgSrcRegex = /<img[^>]+src=["']([^"']+)["'][^>]*>/g;
+        let match: RegExpExecArray | null;
+
+        while ((match = imgSrcRegex.exec(summary)) !== null) {
+          const src = match[1];
+          if (!src) continue;
+
+          const imagePathname = src.startsWith("http")
+            ? new URL(src).pathname
+            : src;
+
+          const relative = imagePathname.replace(/^\/+/, "");
+          const filePath = path.join(process.cwd(), "public", relative);
+
+          if (fs.existsSync(filePath)) {
+            try {
+              fs.unlinkSync(filePath);
+            } catch (err) {
+              console.error("Lỗi khi xóa file ảnh trong summary:", err);
+            }
+          }
+        }
+      }
+    } catch (err) {
+      console.error("Lỗi khi xử lý xóa ảnh trong summary:", err);
     }
 
     return NextResponse.json({
