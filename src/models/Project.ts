@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const projectSchema = new mongoose.Schema({
   name: { type: String, required: true },
+  slug: { type: String, required: true, unique: true },
   address: { type: String, required: true },
   completionYear: { type: String, required: true },
   type: { type: String, required: true },

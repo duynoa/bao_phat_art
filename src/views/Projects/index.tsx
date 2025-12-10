@@ -7,6 +7,7 @@ import axios from "axios";
 interface Project {
   _id: string;
   name: string;
+  slug?: string;
   address: string;
   completionYear: string;
   type: string;

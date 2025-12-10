@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import Project from "@/models/Project";
 import { uploadImage } from "@/lib/uploadImage";
+import { toSlug } from "@/utils/slug";
 import fs from "fs";
 import path from "path";
 
@@ -11,12 +12,24 @@ export async function POST(request: Request) {
 
     const formData = await request.formData();
 
+    const name = (formData.get("name") as string) || "";
     const mainImage = formData.get("mainImage") as File;
+    const baseSlug = toSlug(name);
+    let uniqueSlug = baseSlug;
+    let attempt = 0;
+
+    while (await (Project.findOne as any)({ slug: uniqueSlug })) {
+      attempt += 1;
+      const suffix = Date.now().toString(36).slice(-4);
+      uniqueSlug = `${baseSlug}-${suffix}`;
+      if (attempt > 3) break; // tránh vòng lặp vô hạn
+    }
     const imagePath = await uploadImage(mainImage, "projects");
 
     // Tạo và lưu dự án vào database
     const project = new Project({
-      name: formData.get("name"),
+      name,
+      slug: uniqueSlug,
       address: formData.get("address"),
       completionYear: formData.get("completionYear"),
       type: formData.get("type"),
@@ -45,6 +58,23 @@ export async function GET(request: Request) {
     await connectDB();
 
     const { searchParams } = new URL(request.url);
+    const slug = searchParams.get("slug");
+
+    if (slug) {
+      const project = await (Project.findOne as any)({ slug });
+      if (!project) {
+        return NextResponse.json(
+          { message: "Không tìm thấy dự án" },
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json({
+        message: "Lấy dự án thành công",
+        project,
+      });
+    }
+
     const page = parseInt(searchParams.get("page") || "0");
     const limit = parseInt(searchParams.get("limit") || "10");
     const skip = page * limit;

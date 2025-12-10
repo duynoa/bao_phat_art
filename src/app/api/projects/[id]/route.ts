@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import Project from "@/models/Project";
 import { uploadImage } from "@/lib/uploadImage";
+import { toSlug } from "@/utils/slug";
 import fs from "fs";
 import path from "path";
 
@@ -24,13 +25,29 @@ export async function PUT(
 
     const formData = await request.formData();
 
+    const name = (formData.get("name") as string) || "";
     const updateData: any = {
-      name: formData.get("name"),
+      name,
+      slug: toSlug(name),
       address: formData.get("address"),
       completionYear: formData.get("completionYear"),
       type: formData.get("type"),
       summary: formData.get("summary"),
     };
+
+    if (updateData.slug !== existingProject?.slug) {
+      const duplicated = await (Project.findOne as any)({
+        slug: updateData.slug,
+        _id: { $ne: params.id },
+      });
+
+      if (duplicated) {
+        return NextResponse.json(
+          { message: "Slug đã tồn tại, vui lòng chọn tên khác" },
+          { status: 400 }
+        );
+      }
+    }
 
     // Xử lý upload ảnh mới nếu có
     const mainImage = formData.get("mainImage") as File;

@@ -12,6 +12,7 @@ import "suneditor/dist/css/suneditor.min.css";
 interface Project {
   _id: string;
   name: string;
+  slug?: string;
   address: string;
   completionYear: number;
   type: string;
@@ -46,6 +47,11 @@ const ProjectAdmin = () => {
     {
       id: 'name',
       label: 'Tên dự án',
+      minWidth: 170
+    },
+    {
+      id: 'slug',
+      label: 'Slug',
       minWidth: 170
     },
     {
@@ -173,6 +179,7 @@ const ProjectAdmin = () => {
                     </TableCell>
                     <TableCell>{project.name}</TableCell>
                     <TableCell>{project.address}</TableCell>
+                    <TableCell>{project.slug}</TableCell>
                     <TableCell align="center">{project.completionYear}</TableCell>
                     <TableCell>
                       {project?.type}

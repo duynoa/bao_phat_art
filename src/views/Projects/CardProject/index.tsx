@@ -10,6 +10,7 @@ interface ProjectProps {
   project: {
     _id: string;
     name: string;
+    slug?: string;
     address: string;
     completionYear: string;
     type: string;
@@ -20,7 +21,7 @@ interface ProjectProps {
 
 const CardProject = ({ project }: ProjectProps) => {
   return (
-    <Link href={`/du-an/${project._id}`} className="relative flex flex-col md:flex-row w-full h-auto md:h-[200px] border border-gray-300 rounded-lg overflow-hidden">
+    <Link href={`/du-an/${project.slug || project._id}`} className="relative flex flex-col md:flex-row w-full h-auto md:h-[200px] border border-gray-300 rounded-lg overflow-hidden">
       <div className="xl:flex-1 p-4 flex flex-col justify-between">
         <div className="flex flex-col gap-2">
           <h2 className="text-title1 uppercase text-gray-900 line-clamp-1">{project.name}</h2>

@@ -1,17 +1,68 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import { IMAGES } from "@/constants/images";
 import Image from "next/image";
+import { useParams } from "next/navigation";
+import axios from "axios";
+
+interface Project {
+  _id: string;
+  name: string;
+  slug?: string;
+  address: string;
+  completionYear: string;
+  type: string;
+  summary: string;
+  mainImage: string;
+}
 
 const ProjectDetail = () => {
+  const { slug } = useParams<{ slug: string }>();
+  const [project, setProject] = useState<Project | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchDetail = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get(`/api/projects?slug=${slug}`);
+        setProject(res.data.project);
+      } catch (err: any) {
+        setError(err?.response?.data?.message || "Không thể tải dự án");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (slug) fetchDetail();
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 max-w-7xl py-10 text-center">
+        Đang tải dữ liệu...
+      </div>
+    );
+  }
+
+  if (error || !project) {
+    return (
+      <div className="container mx-auto px-4 max-w-7xl py-10 text-center text-red-600">
+        {error || "Không tìm thấy dự án"}
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto px-4 max-w-7xl flex flex-col gap-4">
       <div className="text-title1 font-bold uppercase mt-4 text-gray-900">
-        Dự án Nhà phố Quảng Ngãi
+        {project.name}
       </div>
       <div className="w-full h-[500px] overflow-hidden rounded-lg mb-6">
         <Image
-          src={IMAGES.nhapho1}
-          alt="Dự án Đồng Văn Đoan"
+          src={project.mainImage || IMAGES.gray}
+          alt={project.name}
           className="w-full h-full object-cover"
           width={1000}
           height={1000}
@@ -24,7 +75,7 @@ const ProjectDetail = () => {
             Địa chỉ:
           </span>
           <span className="text-base text-gray-800">
-            Thành phố Quảng Ngãi - Tỉnh Quảng Ngãi
+            {project.address}
           </span>
         </div>
 
@@ -32,14 +83,14 @@ const ProjectDetail = () => {
           <span className="text-sm font-semibold text-gray-600 uppercase">
             NĂM HOÀN THÀNH:
           </span>
-          <span className="text-base text-gray-800">2020</span>
+          <span className="text-base text-gray-800">{project.completionYear}</span>
         </div>
 
         <div className="flex flex-col gap-2">
           <span className="text-sm font-semibold text-gray-600 uppercase">
             Loại hình:
           </span>
-          <span className="text-base text-gray-800">Nhà phố</span>
+          <span className="text-base text-gray-800">{project.type}</span>
         </div>
       </div>
       <div>
@@ -47,12 +98,7 @@ const ProjectDetail = () => {
           Tóm tắt dự án
         </div>
         <div className="text-body1 text-gray-600">
-          Dự án Nhà phố Quảng Ngãi là một công trình nhà ở hiện đại, 
-          được thiết kế với phong cách đương đại sang trọng. Với diện tích 
-          xây dựng 100m², công trình gồm 4 tầng với đầy đủ công năng: phòng 
-          khách, bếp, phòng ngủ và sân thượng. Thiết kế phù hợp với khí hậu 
-          miền Trung, tối ưu ánh sáng tự nhiên cùng với không gian xanh tạo 
-          nên một không gian sống lý tưởng cho gia đình.
+          <div dangerouslySetInnerHTML={{ __html: project.summary }} />
         </div>
       </div>
     </div>
