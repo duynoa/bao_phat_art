@@ -22,9 +22,9 @@
     "jsonwebtoken": "^9.0.2",
     "moment": "^2.30.1",
     "mongoose": "^8.10.1",
-    "next": "15.1.7",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "next": "^16.0.8",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
     "suneditor": "^2.47.5",
     "suneditor-react": "^3.6.1",
     "swiper": "^11.2.4"

@@ -22,7 +22,7 @@
     "incremental": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "plugins": [
       {
         "name": "next"
@@ -35,7 +35,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "scripts/seed.ts",
-    "src/lib/seeder.js"
+    "src/lib/seeder.js",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"
