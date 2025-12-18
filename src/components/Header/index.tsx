@@ -12,7 +12,7 @@ const Header = () => {
     { href: "/gioi-thieu", label: "Giới thiệu" },
     { href: "/dich-vu", label: "Dịch vụ" },
     // { href: "/san-pham", label: "Sản phẩm" },
-    // { href: "/du-an", label: "Dự án" },
+    { href: "/du-an", label: "Dự án" },
     { href: "/lien-he", label: "Liên hệ" },
   ];
 
