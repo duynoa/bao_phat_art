@@ -1,7 +1,6 @@
 import { IMAGES } from "@/constants/images";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 
 const quickLinks = [
   { text: "Giới thiệu", href: "/gioi-thieu" },
@@ -14,7 +13,7 @@ const quickLinks = [
 const contactLinks = [
   { text: "Hotline1:  0789 490 590", href: "tel:0789490590" },
   { text: "Hotline2:  0373 464 789", href: "tel:0373464789" },
-  { text: "Email: info@gmail.com", href: "mailto:info@gmail.com" },
+  { text: "Email: baophatart76@gmail.com", href: "mailto:baophatart76@gmail.com" },
 ];
 
 const Footer = () => {

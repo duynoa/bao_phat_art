@@ -44,12 +44,25 @@ const ProductDetail = ({ slug }: Props) => {
     async function fetchProduct() {
       try {
         setIsLoading(true);
+        setError(null);
         const res = await fetch(`/api/products?slug=${encodeURIComponent(slug)}`);
-        if (!res.ok) throw new Error("Không tìm thấy sản phẩm");
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({}));
+          throw new Error(errorData.message || "Không tìm thấy sản phẩm");
+        }
         const data = await res.json();
-        if (isMounted) setProduct(data.product);
+        if (isMounted) {
+          if (data.product) {
+            setProduct(data.product);
+          } else {
+            setError("Không tìm thấy sản phẩm");
+          }
+        }
       } catch (e: any) {
-        if (isMounted) setError(e.message || "Đã xảy ra lỗi");
+        if (isMounted) {
+          setError(e.message || "Đã xảy ra lỗi khi tải sản phẩm");
+          setProduct(null);
+        }
       } finally {
         if (isMounted) setIsLoading(false);
       }

@@ -4,6 +4,7 @@ import {
   Menu as MenuIcon,
   Inventory as InventoryIcon,
   BarChart as BarChartIcon,
+  ContactMail as ContactMailIcon,
 } from "@mui/icons-material";
 import Link from "next/link";
 
@@ -16,6 +17,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
   const menuItems = [
     { icon: InventoryIcon, label: "Sản phẩm", href: "/admin/products" },
     { icon: BarChartIcon, label: "Dự án", href: "/admin/projects" },
+    { icon: ContactMailIcon, label: "Liên hệ", href: "/admin/contacts" },
   ];
 
   return (

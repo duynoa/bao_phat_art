@@ -5,19 +5,40 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
 
+type Product = {
+  _id: string;
+  name: string;
+  slug: string;
+  shortDesc?: string;
+  originalPrice: number;
+  salePrice?: number;
+  discountPercent?: number;
+  specifications?: string;
+  images: string[];
+};
+
 const Products = () => {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        setLoading(true);
+        setError(null);
         const { data } = await axios.get("/api/products");
-        if (data.products) {
+        
+        if (data && data.products && Array.isArray(data.products)) {
           setProducts(data.products);
+        } else {
+          setProducts([]);
+          console.warn("Dữ liệu sản phẩm không đúng định dạng:", data);
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error("Lỗi khi lấy danh sách sản phẩm:", error);
+        setError(error.response?.data?.message || "Không thể tải danh sách sản phẩm");
+        setProducts([]);
       } finally {
         setLoading(false);
       }
@@ -60,27 +81,43 @@ const Products = () => {
             </div>
           </div>
 
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+              <p className="font-medium">Lỗi:</p>
+              <p>{error}</p>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 auto-rows-fr">
             {loading ? (
-              <div>Đang tải...</div>
+              <div className="col-span-full flex items-center justify-center py-12">
+                <div className="text-center">
+                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mb-4"></div>
+                  <p className="text-gray-600">Đang tải sản phẩm...</p>
+                </div>
+              </div>
             ) : products.length > 0 ? (
               products.map((product) => (
                 <Card
                   key={product._id}
                   title={product.name}
                   description={product.shortDesc}
-                  image={product.images[0]}
+                  image={product.images && product.images.length > 0 ? product.images[0] : undefined}
                   href={`/san-pham/${product.slug}`}
                 />
               ))
             ) : (
-              <div>Không có sản phẩm nào</div>
+              <div className="col-span-full text-center py-12">
+                <p className="text-gray-600 text-lg">Không có sản phẩm nào</p>
+              </div>
             )}
           </div>
 
-          <div className="flex justify-center mt-8">
-            <Pagination count={10} />
-          </div>
+          {products.length > 0 && (
+            <div className="flex justify-center mt-8">
+              <Pagination count={10} />
+            </div>
+          )}
         </div>
       </div>
     </div>

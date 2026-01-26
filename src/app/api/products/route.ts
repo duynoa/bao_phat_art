@@ -51,8 +51,14 @@ export async function POST(req: Request) {
     });
     await product.save();
     
+    // Chuyển đổi ObjectId thành string để JSON serialize
+    const productData = {
+      ...product.toObject(),
+      _id: product._id.toString(),
+    };
+    
     return NextResponse.json(
-      { message: 'Thêm sản phẩm thành công', product },
+      { message: 'Thêm sản phẩm thành công', product: productData },
       { status: 201 }
     );
   } catch (error: any) {
@@ -74,19 +80,29 @@ export async function GET(req: Request) {
       const product = await (Product.findOne as any)({ slug });
       if (!product) {
         return NextResponse.json(
-          { message: 'Không tìm thấy sản phẩm' },
+          { message: 'Không tìm thấy sản phẩm', product: null },
           { status: 404 }
         );
       }
+      // Chuyển đổi ObjectId thành string để JSON serialize
+      const productData = {
+        ...product.toObject(),
+        _id: product._id.toString(),
+      };
       return NextResponse.json(
-        { message: 'Lấy sản phẩm thành công', product },
+        { message: 'Lấy sản phẩm thành công', product: productData },
         { status: 200 }
       );
     }
 
-    const products = await (Product.find as any)({}, {}, { sort: { createdAt: -1 } });
+    const products = await (Product.find as any)({}).sort({ createdAt: -1 });
+    // Chuyển đổi tất cả ObjectId thành string
+    const productsData = products.map((product: any) => ({
+      ...product.toObject(),
+      _id: product._id.toString(),
+    }));
     return NextResponse.json(
-      { message: 'Lấy danh sách sản phẩm thành công', products },
+      { message: 'Lấy danh sách sản phẩm thành công', products: productsData },
       { status: 200 }
     );
   } catch (error: any) {
@@ -116,13 +132,19 @@ export async function DELETE(req: Request) {
     
     if (!deletedProduct) {
       return NextResponse.json(
-        { message: 'Không tìm thấy sản phẩm' },
+        { message: 'Không tìm thấy sản phẩm', product: null },
         { status: 404 }
       );
     }
 
+    // Chuyển đổi ObjectId thành string để JSON serialize
+    const productData = {
+      ...deletedProduct.toObject(),
+      _id: deletedProduct._id.toString(),
+    };
+
     return NextResponse.json(
-      { message: 'Xóa sản phẩm thành công', product: deletedProduct },
+      { message: 'Xóa sản phẩm thành công', product: productData },
       { status: 200 }
     );
   } catch (error: any) {

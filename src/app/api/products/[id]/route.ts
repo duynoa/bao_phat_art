@@ -77,8 +77,14 @@ export async function PUT(req: NextRequest, props: Props) {
       { new: true }
     );
 
+    // Chuyển đổi ObjectId thành string để JSON serialize
+    const productData = {
+      ...updatedProduct.toObject(),
+      _id: updatedProduct._id.toString(),
+    };
+
     return NextResponse.json(
-      { message: "Cập nhật sản phẩm thành công", product: updatedProduct },
+      { message: "Cập nhật sản phẩm thành công", product: productData },
       { status: 200 }
     );
   } catch (error: any) {
@@ -98,13 +104,19 @@ export async function GET(req: NextRequest, props: Props) {
     const product = await (Product.findById as any)(params.id);
     if (!product) {
       return NextResponse.json(
-        { message: "Không tìm thấy sản phẩm" },
+        { message: "Không tìm thấy sản phẩm", product: null },
         { status: 404 }
       );
     }
 
+    // Chuyển đổi ObjectId thành string để JSON serialize
+    const productData = {
+      ...product.toObject(),
+      _id: product._id.toString(),
+    };
+
     return NextResponse.json(
-      { message: "Lấy thông tin sản phẩm thành công", product },
+      { message: "Lấy thông tin sản phẩm thành công", product: productData },
       { status: 200 }
     );
   } catch (error: any) {
